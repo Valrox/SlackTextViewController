@@ -101,8 +101,8 @@ NSString * const SLKTextInputbarDidMoveNotification =   @"SLKTextInputbarDidMove
     [self addSubview:self.rightButton];
     [self addSubview:self.textView];
     [self addSubview:self.charCountLabel];
-    [self addSubview:self.joinView];
     [self addSubview:self.contentView];
+    [self addSubview:self.joinView];
     
     [self slk_setupViewConstraints];
     [self slk_updateConstraintConstants];
@@ -734,6 +734,7 @@ NSString * const SLKTextInputbarDidMoveNotification =   @"SLKTextInputbarDidMove
                             @"editorContentView": self.editorContentView,
                             @"charCountLabel": self.charCountLabel,
                             @"contentView": self.contentView,
+                            @"joinView": self.joinView
                             };
     
     NSDictionary *metrics = @{@"top" : @(self.contentInset.top),
