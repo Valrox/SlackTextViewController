@@ -691,6 +691,8 @@ CGFloat const SLKAutoCompletionViewDefaultHeight = 140.0;
     
     if (inputbarHeight != self.textInputbarHC.constant)
     {
+        CGFloat inputBarHeightDelta = inputbarHeight - self.textInputbarHC.constant;
+        CGPoint newOffset = CGPointMake(0, self.scrollViewProxy.contentOffset.y + inputBarHeightDelta);
         self.textInputbarHC.constant = inputbarHeight;
         self.scrollViewHC.constant = [self slk_appropriateScrollViewHeight];
         
@@ -703,6 +705,9 @@ CGFloat const SLKAutoCompletionViewDefaultHeight = 140.0;
             [self.view slk_animateLayoutIfNeededWithBounce:bounces
                                                    options:UIViewAnimationOptionCurveEaseInOut|UIViewAnimationOptionLayoutSubviews|UIViewAnimationOptionBeginFromCurrentState
                                                 animations:^{
+                                                    if (!self.isInverted) {
+                                                        self.scrollViewProxy.contentOffset = newOffset;
+                                                    }
                                                     if (weakSelf.textInputbar.isEditing) {
                                                         [weakSelf.textView slk_scrollToCaretPositonAnimated:NO];
                                                     }
@@ -909,7 +914,7 @@ CGFloat const SLKAutoCompletionViewDefaultHeight = 140.0;
     
     void (^animations)() = ^void(){
         
-        weakSelf.textInputbarHC.constant = hidden ? 0 : weakSelf.textInputbar.appropriateHeight;
+        weakSelf.textInputbarHC.constant = hidden ? 0.0 : weakSelf.textInputbar.appropriateHeight;
         
         [weakSelf.view layoutIfNeeded];
     };
@@ -972,6 +977,7 @@ CGFloat const SLKAutoCompletionViewDefaultHeight = 140.0;
     // Checking the keyboard height constant helps to disable the view constraints update on iPad when the keyboard is undocked.
     // Checking the keyboard status allows to keep the inputAccessoryView valid when still reacing the bottom of the screen.
     CGFloat bottomMargin = [self slk_appropriateBottomMargin];
+    
     if (![self.textView isFirstResponder] || (self.keyboardHC.constant == bottomMargin && self.keyboardStatus == SLKKeyboardStatusDidHide)) {
 #if SLKBottomPanningEnabled
         if ([gesture.view isEqual:self.scrollViewProxy]) {
@@ -1202,13 +1208,17 @@ CGFloat const SLKAutoCompletionViewDefaultHeight = 140.0;
         return;
     }
     
-    // During text autocompletion, the iOS 8 QuickType bar is hidden and auto-correction and spell checking are disabled.
+    if (enable == NO && ![self shouldDisableTypingSuggestionForAutoCompletion]) {
+        return;
+    }
+    
     [self.textView setTypingSuggestionEnabled:enable];
 }
 
 - (void)slk_dismissTextInputbarIfNeeded
 {
     CGFloat bottomMargin = [self slk_appropriateBottomMargin];
+    
     if (self.keyboardHC.constant == bottomMargin) {
         return;
     }
@@ -1336,6 +1346,7 @@ CGFloat const SLKAutoCompletionViewDefaultHeight = 140.0;
     }
    
     CGFloat bottomMargin = [self slk_appropriateBottomMargin];
+    
     if ([self ignoreTextInputbarAdjustment] || ([self.textView isFirstResponder] && self.keyboardHC.constant == bottomMargin)) {
         return;
     }
@@ -1377,7 +1388,7 @@ CGFloat const SLKAutoCompletionViewDefaultHeight = 140.0;
     
     // Skips if it's not the expected textView and shouldn't force adjustment of the text input bar.
     // This will also dismiss the text input bar if it's visible, and exit auto-completion mode if enabled.
-    if (![currentResponder isEqual:self.textView] && ![self forceTextInputbarAdjustmentForResponder:currentResponder]) {
+    if (currentResponder && ![currentResponder isEqual:self.textView] && ![self forceTextInputbarAdjustmentForResponder:currentResponder]) {
         [self slk_dismissTextInputbarIfNeeded];
         return;
     }
@@ -1410,6 +1421,8 @@ CGFloat const SLKAutoCompletionViewDefaultHeight = 140.0;
         [self slk_hideAutoCompletionViewIfNeeded];
     }
     
+    UIScrollView *scrollView = self.scrollViewProxy;
+    
     NSInteger curve = [notification.userInfo[UIKeyboardAnimationCurveUserInfoKey] integerValue];
     NSTimeInterval duration = [notification.userInfo[UIKeyboardAnimationDurationUserInfoKey] doubleValue];
     
@@ -1420,10 +1433,10 @@ CGFloat const SLKAutoCompletionViewDefaultHeight = 140.0;
         // Scrolls to bottom only if the keyboard is about to show.
         if (self.shouldScrollToBottomAfterKeyboardShows && self.keyboardStatus == SLKKeyboardStatusWillShow) {
             if (self.isInverted) {
-                [self.scrollViewProxy slk_scrollToTopAnimated:YES];
+                [scrollView slk_scrollToTopAnimated:YES];
             }
             else {
-                [self.scrollViewProxy slk_scrollToBottomAnimated:YES];
+                [scrollView slk_scrollToBottomAnimated:YES];
             }
         }
     };
@@ -1433,6 +1446,20 @@ CGFloat const SLKAutoCompletionViewDefaultHeight = 140.0;
     // Second condition: check if the height of the keyboard changed.
     if (!CGRectEqualToRect(beginFrame, endFrame) || fabs(previousKeyboardHeight - self.keyboardHC.constant) > 0.0)
     {
+        // Content Offset correction if not inverted and not auto-completing.
+        if (!self.isInverted && !self.isAutoCompleting) {
+            
+            CGFloat scrollViewHeight = self.scrollViewHC.constant;
+            CGFloat keyboardHeight = self.keyboardHC.constant;
+            CGSize contentSize = scrollView.contentSize;
+            CGPoint contentOffset = scrollView.contentOffset;
+            
+            CGFloat newOffset = MIN(contentSize.height - scrollViewHeight,
+                                    contentOffset.y + keyboardHeight - previousKeyboardHeight);
+            
+            scrollView.contentOffset = CGPointMake(contentOffset.x, newOffset);
+        }
+        
         // Only for this animation, we set bo to bounce since we want to give the impression that the text input is glued to the keyboard.
         [self.view slk_animateLayoutIfNeededWithDuration:duration
                                                   bounce:NO
@@ -1633,6 +1660,20 @@ CGFloat const SLKAutoCompletionViewDefaultHeight = 140.0;
 
 - (BOOL)shouldProcessTextForAutoCompletion:(NSString *)text
 {
+    return [self shouldProcessTextForAutoCompletion];
+}
+
+- (BOOL)shouldProcessTextForAutoCompletion
+{
+    if (!_registeredPrefixes || _registeredPrefixes.count == 0) {
+        return NO;
+    }
+    
+    return YES;
+}
+
+- (BOOL)shouldDisableTypingSuggestionForAutoCompletion
+{
     if (!_registeredPrefixes || _registeredPrefixes.count == 0) {
         return NO;
     }
@@ -1648,7 +1689,9 @@ CGFloat const SLKAutoCompletionViewDefaultHeight = 140.0;
 - (void)showAutoCompletionView:(BOOL)show
 {
     // Reloads the tableview before showing/hiding
-    [_autoCompletionView reloadData];
+    if (show) {
+        [_autoCompletionView reloadData];
+    }
     
     self.autoCompleting = show;
     
@@ -2435,19 +2478,6 @@ CGFloat const SLKAutoCompletionViewDefaultHeight = 140.0;
     _inputRightButtonClass = nil;
     
     [_typingIndicatorProxyView removeObserver:self forKeyPath:@"visible"];
-    _typingIndicatorProxyView = nil;
-    _typingIndicatorViewClass = nil;
-    
-    _registeredPrefixes = nil;
-    _singleTapGesture.delegate = nil;
-    _singleTapGesture = nil;
-    _verticalPanGesture.delegate = nil;
-    _verticalPanGesture = nil;
-    _scrollViewHC = nil;
-    _textInputbarHC = nil;
-    _typingIndicatorViewHC = nil;
-    _autoCompletionViewHC = nil;
-    _keyboardHC = nil;
 }
 
 @end
