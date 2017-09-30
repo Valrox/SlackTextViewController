@@ -19,6 +19,8 @@ NSString * const SLKTextInputbarDidMoveNotification =   @"SLKTextInputbarDidMove
 
 @interface SLKTextInputbar ()
 
+@property (nonatomic, strong) UIView *hairlineView;
+
 @property (nonatomic, strong) NSLayoutConstraint *textViewBottomMarginC;
 @property (nonatomic, strong) NSLayoutConstraint *contentViewHC;
 @property (nonatomic, strong) NSLayoutConstraint *leftButtonWC;
@@ -95,7 +97,8 @@ NSString * const SLKTextInputbarDidMoveNotification =   @"SLKTextInputbarDidMove
     self.autoHideRightButton = YES;
     self.editorContentViewHeight = 38.0;
     self.contentInset = UIEdgeInsetsMake(5.0, 8.0, 5.0, 8.0);
-    
+    self.backgroundColor = [UIColor colorWithRed:247.0/255.0 green:247.0/255.0 blue:247.0/255.0 alpha:1.0]; //UIToolbar native bar tint color
+
     [self addSubview:self.editorContentView];
     [self addSubview:self.leftButton];
     [self addSubview:self.rightButton];
@@ -104,6 +107,8 @@ NSString * const SLKTextInputbarDidMoveNotification =   @"SLKTextInputbarDidMove
     [self addSubview:self.contentView];
     [self addSubview:self.joinView];
     
+    [self addSubview:self.hairlineView];
+
     [self slk_setupViewConstraints];
     [self slk_updateConstraintConstants];
     
@@ -167,6 +172,16 @@ NSString * const SLKTextInputbarDidMoveNotification =   @"SLKTextInputbarDidMove
         _textView.layer.borderColor =  [UIColor colorWithRed:200.0/255.0 green:200.0/255.0 blue:205.0/255.0 alpha:1.0].CGColor;
     }
     return _textView;
+}
+
+- (UIView *)hairlineView
+{
+    if (!_hairlineView) {
+        _hairlineView = [[UIView alloc] initWithFrame:CGRectMake(0.0, 0.0, [UIScreen mainScreen].bounds.size.width, 0.5)];
+        _hairlineView.autoresizingMask = UIViewAutoresizingFlexibleWidth|UIViewAutoresizingFlexibleBottomMargin;
+        _hairlineView.backgroundColor = [[UIColor blackColor] colorWithAlphaComponent:0.3];
+    }
+    return _hairlineView;
 }
 
 - (UIView *)contentView
@@ -253,7 +268,7 @@ NSString * const SLKTextInputbarDidMoveNotification =   @"SLKTextInputbarDidMove
     if (!_joinView) {
         _joinView = [UIView new];
         _joinView.translatesAutoresizingMaskIntoConstraints = NO;
-        _joinView.backgroundColor = self.barTintColor;
+        _joinView.backgroundColor = self.backgroundColor;
         _joinView.clipsToBounds = YES;
         _joinView.hidden = YES;
         
@@ -479,9 +494,15 @@ NSString * const SLKTextInputbarDidMoveNotification =   @"SLKTextInputbarDidMove
 
 - (void)setBackgroundColor:(UIColor *)color
 {
-    self.barTintColor = color;
+    [super setBackgroundColor:color];
+//    self.barTintColor = color;
 //    self.editorContentView.backgroundColor = color;
     self.joinView.backgroundColor = color;
+//=======
+//    [super setBackgroundColor:color];
+//
+//    self.editorContentView.backgroundColor = color;
+//>>>>>>> master_up
 }
 
 - (void)setAutoHideRightButton:(BOOL)hide
