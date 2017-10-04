@@ -631,9 +631,15 @@ SLKPastableMediaType SLKPastableMediaTypeFromNSString(NSString *string)
         
         return NO;
     }
-
-    if (action == @selector(delete:)) {
-        return NO;
+    
+    if ([sender isKindOfClass:[UIMenuController class]]) {
+        if (action != @selector(paste:) &&
+            action != @selector(copy:) &&
+            action != @selector(cut:) &&
+            action != @selector(select:) &&
+            action != @selector(selectAll:)) {
+            return NO;
+        }
     }
     
 //    if (action == @selector(slk_presentFormattingMenu:)) {
@@ -642,6 +648,14 @@ SLKPastableMediaType SLKPastableMediaTypeFromNSString(NSString *string)
     
     if (action == @selector(paste:) && [self slk_isPasteboardItemSupported]) {
         return YES;
+    }
+    
+    if ((action == @selector(cut:) || action == @selector(copy:)) && (self.text.length == 0 || [self selectedTextRange].empty)) {
+        return NO;
+    }
+    
+    if ((action == @selector(select:) || action == @selector(selectAll:)) && self.text.length == 0) {
+        return NO;
     }
     
     if (self.undoManagerEnabled) {
@@ -658,7 +672,6 @@ SLKPastableMediaType SLKPastableMediaTypeFromNSString(NSString *string)
             return [self.undoManager canRedo];
         }
     }
-    
     return [super canPerformAction:action withSender:sender];
 }
 
