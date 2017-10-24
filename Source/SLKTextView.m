@@ -637,7 +637,8 @@ SLKPastableMediaType SLKPastableMediaTypeFromNSString(NSString *string)
             action != @selector(copy:) &&
             action != @selector(cut:) &&
             action != @selector(select:) &&
-            action != @selector(selectAll:)) {
+            action != @selector(selectAll:) &&
+            action != @selector(replace:)) {
             return NO;
         }
     }
