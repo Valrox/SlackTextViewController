@@ -126,15 +126,15 @@ static NSString *const SLKTextViewGenericFormattingSelectorPrefix = @"slk_format
 {
     [super layoutSubviews];
     
-//    self.placeholderLabel.hidden = [self slk_shouldHidePlaceholder];
-//    
-//    if (!self.placeholderLabel.hidden) {
-//        
-//        [UIView performWithoutAnimation:^{
-//            self.placeholderLabel.frame = [self slk_placeholderRectThatFits:self.bounds];
-//            [self sendSubviewToBack:self.placeholderLabel];
-//        }];
-//    }
+    self.placeholderLabel.hidden = [self slk_shouldHidePlaceholder];
+    
+    if (!self.placeholderLabel.hidden) {
+        
+        [UIView performWithoutAnimation:^{
+            self.placeholderLabel.frame = [self slk_placeholderRectThatFits:self.bounds];
+            [self sendSubviewToBack:self.placeholderLabel];
+        }];
+    }
 }
 
 
@@ -385,18 +385,18 @@ SLKPastableMediaType SLKPastableMediaTypeFromNSString(NSString *string)
     return NO;
 }
 
-//- (CGRect)slk_placeholderRectThatFits:(CGRect)bounds
-//{
-//    CGFloat padding = self.textContainer.lineFragmentPadding;
-//    
-//    CGRect rect = CGRectZero;
-//    rect.size.height = [self.placeholderLabel sizeThatFits:bounds.size].height;
-//    rect.size.width = self.textContainer.size.width - padding*2.0;
-//    rect.origin = UIEdgeInsetsInsetRect(bounds, self.textContainerInset).origin;
-//    rect.origin.x += padding;
-//    
-//    return rect;
-//}
+- (CGRect)slk_placeholderRectThatFits:(CGRect)bounds
+{
+    CGFloat padding = self.textContainer.lineFragmentPadding;
+    
+    CGRect rect = CGRectZero;
+    rect.size.height = [self.placeholderLabel sizeThatFits:bounds.size].height;
+    rect.size.width = self.textContainer.size.width - padding*2.0;
+    rect.origin = UIEdgeInsetsInsetRect(bounds, self.textContainerInset).origin;
+    rect.origin.x += padding;
+    
+    return rect;
+}
 
 
 #pragma mark - Setters

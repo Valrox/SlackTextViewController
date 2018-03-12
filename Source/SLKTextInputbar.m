@@ -619,6 +619,11 @@ NSString * const SLKTextInputbarDidMoveNotification =   @"SLKTextInputbarDidMove
         [self.joinIndicator stopAnimating];
 }
 
+- (void)setHairlineHidden:(BOOL)hidden
+{
+    self.hairlineView.hidden = hidden;
+}
+
 
 #pragma mark - Text Editing
 

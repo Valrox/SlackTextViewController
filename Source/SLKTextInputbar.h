@@ -128,6 +128,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)setHiddenJoinView:(BOOL)hidden;
 - (void)startActivitiIndicator:(BOOL)start;
 
+- (void)setHairlineHidden:(BOOL)hidden;
 
 #pragma mark - Text Counting
 ///------------------------------------------------
