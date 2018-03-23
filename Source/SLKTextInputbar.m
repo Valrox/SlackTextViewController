@@ -108,8 +108,6 @@ NSString * const SLKTextInputbarDidMoveNotification =   @"SLKTextInputbarDidMove
     [self addSubview:self.contentView];
     [self addSubview:self.joinView];
     
-    [self addSubview:self.hairlineView];
-
     [self slk_setupViewConstraints];
     [self slk_updateConstraintConstants];
     
@@ -486,14 +484,9 @@ NSString * const SLKTextInputbarDidMoveNotification =   @"SLKTextInputbarDidMove
 - (void)setBackgroundColor:(UIColor *)color
 {
     [super setBackgroundColor:color];
-//    self.barTintColor = color;
+    self.barTintColor = color;
 //    self.editorContentView.backgroundColor = color;
     self.joinView.backgroundColor = color;
-//=======
-//    [super setBackgroundColor:color];
-//
-//    self.editorContentView.backgroundColor = color;
-//>>>>>>> master_up
 }
 
 - (void)setAutoHideRightButton:(BOOL)hide
@@ -608,11 +601,6 @@ NSString * const SLKTextInputbarDidMoveNotification =   @"SLKTextInputbarDidMove
         [self.joinIndicator startAnimating];
     } else
         [self.joinIndicator stopAnimating];
-}
-
-- (void)setHairlineHidden:(BOOL)hidden
-{
-    self.hairlineView.hidden = hidden;
 }
 
 
