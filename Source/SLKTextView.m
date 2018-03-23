@@ -633,6 +633,14 @@ SLKPastableMediaType SLKPastableMediaTypeFromNSString(NSString *string)
     }
     
     if ([sender isKindOfClass:[UIMenuController class]]) {
+        UIMenuController *menu = (UIMenuController *)sender;
+        if (menu.menuItems.count == 1) {
+            UIMenuItem *singleItem = menu.menuItems.firstObject;
+            NSString *strSel = NSStringFromSelector(singleItem.action);
+            if ([strSel rangeOfString:@"menuitemkit"].location != NSNotFound) {
+                return NO;
+            }
+        }
         if (action != @selector(paste:) &&
             action != @selector(copy:) &&
             action != @selector(cut:) &&
