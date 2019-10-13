@@ -14,6 +14,7 @@
 #import "UIView+SLKAdditions.h"
 
 #import "SLKUIConstants.h"
+#import "UIColor+Extension.h"
 
 NSString * const SLKTextInputbarDidMoveNotification =   @"SLKTextInputbarDidMoveNotification";
 
@@ -89,7 +90,7 @@ NSString * const SLKTextInputbarDidMoveNotification =   @"SLKTextInputbarDidMove
 
 - (void)slk_commonInit
 {
-    self.charCountLabelNormalColor = [UIColor lightGrayColor];
+    self.charCountLabelNormalColor = [UIColor compatibleLightGray];
     self.charCountLabelWarningColor = [UIColor redColor];
     
     self.autoHideRightButton = YES;
@@ -158,7 +159,7 @@ NSString * const SLKTextInputbarDidMoveNotification =   @"SLKTextInputbarDidMove
         _textView.maxNumberOfLines = [self slk_defaultNumberOfLines];
 
         _textView.typingSuggestionEnabled = YES;
-        _textView.backgroundColor = [UIColor whiteColor];
+        _textView.backgroundColor = [UIColor compatibleWhite];
         _textView.autocapitalizationType = UITextAutocapitalizationTypeSentences;
 
         _textView.keyboardType = UIKeyboardTypeTwitter;
@@ -226,7 +227,7 @@ NSString * const SLKTextInputbarDidMoveNotification =   @"SLKTextInputbarDidMove
     if (!_editorContentView) {
         _editorContentView = [UIView new];
         _editorContentView.translatesAutoresizingMaskIntoConstraints = NO;
-        _editorContentView.backgroundColor = [UIColor whiteColor];
+        _editorContentView.backgroundColor = [UIColor compatibleWhite];
         _editorContentView.clipsToBounds = YES;
         _editorContentView.hidden = YES;
         

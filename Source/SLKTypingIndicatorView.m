@@ -9,6 +9,7 @@
 #import "SLKTypingIndicatorView.h"
 #import "UIView+SLKAdditions.h"
 #import "SLKUIConstants.h"
+#import "UIColor+Extension.h"
 
 #define SLKTypingIndicatorViewIdentifier    [NSString stringWithFormat:@"%@.%@", SLKTextViewControllerDomain, NSStringFromClass([self class])]
 
@@ -49,15 +50,15 @@
 
 - (void)slk_commonInit
 {
-    self.backgroundColor = [UIColor whiteColor];
+    self.backgroundColor = [UIColor compatibleWhite];
     
     self.interval = 6.0;
     self.canResignByTouch = NO;
     self.usernames = [NSMutableArray new];
     self.timers = [NSMutableArray new];
     
-    self.textColor = [UIColor grayColor];
-    self.highlightTextColor = [UIColor grayColor];
+    self.textColor = [UIColor compatibleGray];
+    self.highlightTextColor = [UIColor compatibleGray];
     self.textFont = [UIFont systemFontOfSize:12.0];
     self.highlightFont = [UIFont boldSystemFontOfSize:12.0];
     self.contentInset = UIEdgeInsetsMake(10.0, 40.0, 10.0, 10.0);

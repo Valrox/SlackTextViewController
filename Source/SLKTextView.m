@@ -10,6 +10,7 @@
 #import "SLKTextView+SLKAdditions.h"
 
 #import "SLKUIConstants.h"
+#import "UIColor+Extension.h"
 
 NSString * const SLKTextViewTextWillChangeNotification =            @"SLKTextViewTextWillChangeNotification";
 NSString * const SLKTextViewContentSizeDidChangeNotification =      @"SLKTextViewContentSizeDidChangeNotification";
@@ -149,7 +150,7 @@ static NSString *const SLKTextViewGenericFormattingSelectorPrefix = @"slk_format
         _placeholderLabel.autoresizesSubviews = NO;
         _placeholderLabel.font = self.font;
         _placeholderLabel.backgroundColor = [UIColor clearColor];
-        _placeholderLabel.textColor = [UIColor lightGrayColor];
+        _placeholderLabel.textColor = [UIColor compatibleLightGray];
         _placeholderLabel.hidden = YES;
         _placeholderLabel.isAccessibilityElement = NO;
         

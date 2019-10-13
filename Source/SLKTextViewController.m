@@ -11,6 +11,7 @@
 
 #import "UIResponder+SLKAdditions.h"
 #import "SLKUIConstants.h"
+#import "UIColor+Extension.h"
 
 /** Feature flagged while waiting to implement a more reliable technique. */
 #define SLKBottomPanningEnabled 0
@@ -301,7 +302,7 @@ CGFloat const SLKAutoCompletionViewDefaultHeight = 140.0;
 {
     if (!_collectionView) {
         _collectionView = [[UICollectionView alloc] initWithFrame:CGRectZero collectionViewLayout:layout];
-        _collectionView.backgroundColor = [UIColor whiteColor];
+        _collectionView.backgroundColor = [UIColor compatibleWhite];
         _collectionView.translatesAutoresizingMaskIntoConstraints = NO;
         _collectionView.scrollsToTop = YES;
         _collectionView.dataSource = self;
