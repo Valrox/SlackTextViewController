@@ -297,7 +297,11 @@ NSString * const SLKTextInputbarDidMoveNotification =   @"SLKTextInputbarDidMove
 - (UIActivityIndicatorView *)joinIndicator
 {
     if (!_joinIndicator) {
-        _joinIndicator = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
+        UIActivityIndicatorViewStyle style = UIActivityIndicatorViewStyleGray;
+        if (@available(iOS 13.0, *)) {
+            style = UIActivityIndicatorViewStyleMedium;
+        }
+        _joinIndicator = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:style];
         _joinIndicator.translatesAutoresizingMaskIntoConstraints = NO;
         _joinIndicator.hidesWhenStopped = YES;
         [_joinIndicator stopAnimating];
