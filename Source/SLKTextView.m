@@ -451,10 +451,10 @@ SLKPastableMediaType SLKPastableMediaTypeFromNSString(NSString *string)
         return;
     }
     
-//    self.autocorrectionType = enabled ? UITextAutocorrectionTypeDefault : UITextAutocorrectionTypeNo;
-//    self.spellCheckingType = enabled ? UITextSpellCheckingTypeDefault : UITextSpellCheckingTypeNo;
-//    
-//    [self refreshFirstResponder];
+    self.autocorrectionType = enabled ? UITextAutocorrectionTypeDefault : UITextAutocorrectionTypeNo;
+    self.spellCheckingType = enabled ? UITextSpellCheckingTypeDefault : UITextSpellCheckingTypeNo;
+    
+    [self refreshFirstResponder];
 }
 
 - (void)setContentOffset:(CGPoint)contentOffset
